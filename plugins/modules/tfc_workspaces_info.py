@@ -4,11 +4,7 @@
 # Copyright (c) 2024 Olivier Bernard (@pytoccaz)
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
-# This program is inspired by and contains code snippets from:
-# - `community.general.plugins.module_utils.identity.keycloak.keycloak` module by Eike Frost
-# - `community.general.plugins.module_utils.identity.keycloak.keycloak_clientsecret` module by John Cant
-# - `community.general.plugins.modules.keycloak_clientsecret_info` module by Fynn Chen
-# It also contains documentation fragments from `community.general.doc_fragments.keycloak` by Eike Frost.
+
 
 from __future__ import absolute_import, division, print_function
 
@@ -64,7 +60,7 @@ options:
 
     search_wildcard_name:
         description:
-            - Restricts restricts results to workspaces with partial matching, using * on prefix, suffix, or both.
+            - Restricts results to workspaces with partial matching, using * on prefix, suffix, or both.
         type: str
         aliases:
           - search_wildcard

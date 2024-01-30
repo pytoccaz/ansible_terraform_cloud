@@ -1,14 +1,14 @@
-.. _pytoccaz.terraform_cloud.tfc_workspaces_info_module:
+.. _pytoccaz.terraform_cloud.tfc_workspace_info_module:
 
 
-********************************************
-pytoccaz.terraform_cloud.tfc_workspaces_info
-********************************************
+*******************************************
+pytoccaz.terraform_cloud.tfc_workspace_info
+*******************************************
 
-**Terraform Cloud API module to lists workspaces in a organization.**
+**Terraform Cloud API module to show details on a workspace.**
 
 
-Version added: 1.0.0
+Version added: 1.1.0
 
 .. contents::
    :local:
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module allows you to list to workspaces in a organization via the Terraform Cloud API workspaces endpoint.
+- This module allows you to show to the details of a workspace.
+- The workspace is defined by it's Id or by it's organization and name.
 
 
 
@@ -105,22 +106,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>direct_link</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A complet link with urlencoded parameters for pagination or search filters.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: link</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>http_agent</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -141,78 +126,14 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The organization name.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>page_number</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">1</div>
-                </td>
-                <td>
-                        <div>Pagination page number.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: page</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>page_size</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">20</div>
-                </td>
-                <td>
-                        <div>Pagination page size.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: size</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>search_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Restricts results to workspaces with a name that matches the search string using a fuzzy search.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>search_wildcard_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Restricts results to workspaces with partial matching, using * on prefix, suffix, or both.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: search_wildcard</div>
+                        <div>The name of the organization the workspace belongs to.</div>
+                        <div>Use with O(workspace_name).</div>
+                        <div>Mutually exclusive with O(workspace_id).</div>
                 </td>
             </tr>
             <tr>
@@ -234,6 +155,41 @@ Parameters
                         <div>Verify TLS certificates (do not disable this in production).</div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>workspace_id</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ID of the workspace.</div>
+                        <div>O(workspace_name) with O(organization) can be used as an alternative.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: id</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>workspace_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the workspace.</div>
+                        <div>Use with O(organization).</div>
+                        <div>Mutually exclusive with O(workspace_id).</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
+                </td>
+            </tr>
     </table>
     <br/>
 
@@ -245,12 +201,17 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Get a the first workspace from Terraform Cloud for orga myorga
-      tfc_workspaces_info:
-        organization: myorga
-        page_size: 1
+    - name: Retrieve workspace details by workspace Id
+      tfc_workspace_info:
+        workspace_id: WORKSPACEID
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-      register: a_workspace
+        
+        
+    - name: Retrieve workspace details by workspace organization and name
+      tfc_workspace_info:
+        workspace_name: workspace1
+        organization: orga1
+        token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
 
 
 
@@ -272,45 +233,15 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>data</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=dictionary</span>
-                    </div>
-                </td>
-                <td>on success</td>
-                <td>
-                            <div>The workspaces list</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>links</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=dictionary</span>
-                    </div>
-                </td>
-                <td>on success</td>
-                <td>
-                            <div>The pagination links</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>meta</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
                       <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>on success</td>
                 <td>
-                            <div>Pagination info</div>
+                            <div>The workspace details</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;id&#x27;: &#x27;ws-4YD4Y4sIDnl8PpV2&#x27;, &#x27;attributes&#x27;: {&#x27;name&#x27;: &#x27;workspace1&#x27;}}</div>
                 </td>
             </tr>
     </table>

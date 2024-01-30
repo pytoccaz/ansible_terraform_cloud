@@ -22,6 +22,7 @@ ansible-galaxy collection install pytoccaz.terraform_cloud
 ### Modules
 Name | Description
 --- | ---
+[pytoccaz.terraform_cloud.tfc_workspace_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.tfc_workspace_info_module.rst)|Terraform Cloud API module to show details on a workspace.
 [pytoccaz.terraform_cloud.tfc_workspace_vars_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.tfc_workspace_vars_info_module.rst)|Terraform Cloud API module to list workspace vars.
 [pytoccaz.terraform_cloud.tfc_workspaces_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.tfc_workspaces_info_module.rst)|Terraform Cloud API module to lists workspaces in a organization.
 
