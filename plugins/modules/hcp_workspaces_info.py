@@ -4,11 +4,6 @@
 # Copyright (c) 2024 Olivier Bernard (@pytoccaz)
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
-# This program is inspired by and contains code snippets from:
-# - `community.general.plugins.module_utils.identity.keycloak.keycloak` module by Eike Frost
-# - `community.general.plugins.module_utils.identity.keycloak.keycloak_clientsecret` module by John Cant
-# - `community.general.plugins.modules.keycloak_clientsecret_info` module by Fynn Chen
-# It also contains documentation fragments from `community.general.doc_fragments.keycloak` by Eike Frost.
 
 from __future__ import absolute_import, division, print_function
 
@@ -17,27 +12,19 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: tfc_workspaces_info
+module: hcp_workspaces_info
 
-short_description: Terraform Cloud API module to lists workspaces in a organization.
+short_description: Terraform Cloud API (HCP) module to lists workspaces in one organization.
 
 version_added: 1.0.0
 
 description:
-  - This module allows you to list to workspaces in a organization via
-    the Terraform Cloud API workspaces endpoint.
-
+    - This module lists the workspaces in one organization the appropriate Terraform Cloud API (HCP) endpoint.
+    - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#list-workspaces.
 options:
-    direct_link:
-        description:
-            - A complet link with urlencoded parameters for pagination or search filters.
-        type: str
-        aliases:
-            - link
-
     organization:
         description:
-            - The organization name.
+            - The name of the organization the workspace belongs to.
         type: str
         required: yes
 
@@ -77,51 +64,31 @@ author:
 '''
 
 EXAMPLES = '''
-- name: Get a the first workspace from Terraform Cloud for orga myorga
-  tfc_workspaces_info:
-    organization: myorga
-    page_size: 1
-    token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-  register: a_workspace
+  - name: Get the first 10 workspaces from Terraform Cloud for orga myorga
+    tfc_workspaces_info:
+      organization: myorga
+      page_size: 10
+      token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
 '''
 
 RETURN = '''
-data:
-    description: The workspaces list
-    returned: on success
-    type: list
-    elements: dict
-links:
-    description: The pagination links
-    returned: on success
-    type: list
-    elements: dict
-
-meta:
-    description: Pagination info
-    returned: on success
-    type: dict
+    data:
+        description:
+            - The data attribute from HCP route C(GET /organizations/:organization_name/workspaces/:name).
+        returned: success
+        type: list
+        elements: dict
 '''
+from ..module_utils.tfc import TfcClient, TfcError
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
-from ansible.module_utils.six.moves.urllib.parse import urlencode
-from ansible.module_utils.urls import open_url
-import json
 
-
-URL_WORKSPACES = "{url}/api/{version}/organizations/{organization}/workspaces?{params}"
-
-
-class TerraformCloudError(Exception):
-    pass
+WORKSPACES_PATH = "/organizations/{organization}/workspaces"
 
 
 def get_workspaces(module_params):
-    version = module_params.get('api_version')
     organization = module_params.get('organization')
     validate_certs = module_params.get('validate_certs')
     token = module_params.get('api_token')
-    http_agent = module_params.get('http_agent')
     connection_timeout = module_params.get('connection_timeout')
     api_url = module_params.get('api_url')
     page_number = module_params.get('page_number')
@@ -130,9 +97,12 @@ def get_workspaces(module_params):
     search_name = module_params.get('search_name')
     search_wildcard = module_params.get('search_wildcard_name')
 
+    params = None
+
     if direct_link is not None:
-        url = direct_link
+        path = direct_link
     else:
+        path = WORKSPACES_PATH.format(organization=organization)
         params = [('page[number]', page_number), ('page[size]', size)]
 
         if search_name is not None:
@@ -140,36 +110,16 @@ def get_workspaces(module_params):
         elif search_wildcard is not None:
             params.append(('search[wildcard-name]', search_wildcard))
 
-        url = URL_WORKSPACES.format(
-            url=api_url, version=version, organization=organization, params=urlencode(params))
-
-    if not url.lower().startswith(('http', 'https')):
-        raise TerraformCloudError(
-            "url '%s' should either start with 'http' or 'https'." % url)
-
-    headers = {
-        'Authorization': "Bearer {token}".format(token=token)
-    }
-
-    try:
-        r = json.loads(to_native(open_url(url, method='GET', headers=headers,
-                                          validate_certs=validate_certs, http_agent=http_agent, timeout=connection_timeout,
-                                          #   data=urlencode(payload)
-                                          ).read()))
-    except ValueError as e:
-        raise TerraformCloudError(
-            'API returned invalid JSON when trying to get %s: %s'
-            % (url, str(e)))
-    except Exception as e:
-        raise TerraformCloudError('Response error from %s: %s'
-                                  % (url, str(e)))
+    client = TfcClient(token, url=api_url)
+    r = client.read(path, params=params, verify=validate_certs,
+                    timeout=connection_timeout)
 
     return r
 
 
 def main():
     """
-    Module tf_workspaces_info
+    Module tfc_workspaces_info
     """
 
     argument_spec = dict(
@@ -179,14 +129,12 @@ def main():
                      'url'], default="https://app.terraform.io"),
         api_token=dict(type='str', aliases=[
                        'token'], required=True, no_log=True),
-        api_version=dict(type='str', aliases=['version'], default='v2'),
         page_number=dict(type='int', aliases=['page'], default=1),
         page_size=dict(type='int', aliases=['size'], default=20),
         validate_certs=dict(type='bool', default=True),
         search_name=dict(type='str'),
         search_wildcard_name=dict(type='str', aliases=['search_wildcard']),
         connection_timeout=dict(type='int', default=10),
-        http_agent=dict(type='str', default='Ansible'),
     )
 
     module = AnsibleModule(
@@ -203,7 +151,7 @@ def main():
 
     try:
         result = get_workspaces(module.params)
-    except TerraformCloudError as e:
+    except TfcError as e:
         module.fail_json(msg=str(e))
 
     module.exit_json(**result)

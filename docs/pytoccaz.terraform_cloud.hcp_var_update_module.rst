@@ -1,14 +1,14 @@
-.. _pytoccaz.terraform_cloud.tfc_workspace_vars_info_module:
+.. _pytoccaz.terraform_cloud.hcp_var_update_module:
 
 
-************************************************
-pytoccaz.terraform_cloud.tfc_workspace_vars_info
-************************************************
+***************************************
+pytoccaz.terraform_cloud.hcp_var_update
+***************************************
 
-**Terraform Cloud API module to list workspace vars.**
+**Terraform Cloud API (HCP) module to list workspace vars.**
 
 
-Version added: 1.0.0
+Version added: 2.0.0
 
 .. contents::
    :local:
@@ -17,7 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module allows you to list to the variables attached to a workspace.
+- This module modifies a variable given the ID.
+- This module is an alternative to ``hcp_workspace_var_update``.
+- See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/variables#update-variables
 
 
 
@@ -71,19 +73,18 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>api_version</b>
+                    <b>attributes</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"v2"</div>
                 </td>
                 <td>
-                        <div>The version of Terraform Cloud API.</div>
-                        <div>The version <code>v2</code> is currently the only possible value, so you should not change it.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: version</div>
+                        <div>attributes content</div>
+                        <div>shortcut for <code>data</code> option</div>
+                        <div>Mutually exclusive with options <code>payload</code> and <code>data</code></div>
                 </td>
             </tr>
             <tr>
@@ -105,17 +106,35 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>http_agent</b>
+                    <b>data</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"Ansible"</div>
                 </td>
                 <td>
-                        <div>Configures the HTTP User-Agent header.</div>
+                        <div>data content (usually an <code>attributes</code> property)</div>
+                        <div>shortcut for plain <code>payload</code> option</div>
+                        <div>Mutually exclusive with options <code>payload</code> and <code>attributes</code></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>payload</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Raw payload containing usually a <code>data</code> property</div>
+                        <div>Mutually exclusive with options <code>data</code> and <code>attributes</code></div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: raw</div>
                 </td>
             </tr>
             <tr>
@@ -140,7 +159,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>workspace_id</b>
+                    <b>variable_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -150,8 +169,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The ID of the workspace to list variables for.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: workspace</div>
+                        <div>The ID of the variable to update.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: id</div>
                 </td>
             </tr>
     </table>
@@ -159,16 +178,43 @@ Parameters
 
 
 
+See Also
+--------
+
+.. seealso::
+
+   :ref:`pytoccaz.terraform_cloud.hcp_workspace_var_update_module`
+      The official documentation on the **pytoccaz.terraform_cloud.hcp_workspace_var_update** module.
+
 
 Examples
 --------
 
 .. code-block:: yaml
 
-    - name: Get a all the variables associated with a workspace
-      tfc_workspace_vars_info:
-        workspace_id: WORKSPACEID
+    - name: Change the value of a variable with payload option
+      hcp_var_update:
+        variable_id: "var-sQaLVxPGd8Bhui56"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
+        payload:
+          data:
+            attributes:
+              value: "var10"
+
+    - name: Change the value of a variable with data option
+      hcp_var_update:
+        variable_id: "var-sQaLVxPGd8Bhui56"
+        token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
+        data:
+          attributes:
+            value: "var10"
+
+    - name: Change the value of a variable with attributes option
+      hcp_var_update:
+        variable_id: "var-sQaLVxPGd8Bhui56"
+        token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
+        attributes:
+          value: "var10"
 
 
 
@@ -190,16 +236,13 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>data</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=dictionary</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
-                <td>on success</td>
+                <td>success</td>
                 <td>
-                            <div>A list of variables</div>
+                            <div>The data attribute from HCP route <code>PATCH /vars/:variable_id</code></div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;id&#x27;: &#x27;var-eZqhsovhfuze&#x27;, &#x27;attributes&#x27;: {&#x27;key&#x27;: &#x27;var1&#x27;, &#x27;value&#x27;: &#x27;val1&#x27;}}]</div>
                 </td>
             </tr>
     </table>

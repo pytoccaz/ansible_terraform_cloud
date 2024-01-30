@@ -14,15 +14,6 @@ class ModuleDocFragment(object):
     DOCUMENTATION = r'''
 
 options:
-    api_version:
-        description:
-            - The version of Terraform Cloud API.
-            - The version C(v2) is currently the only possible value, so you should not change it.
-        type: str
-        default: v2
-        aliases:
-          - version
-
     api_url:
         description:
             - Terraform cloud service url.
@@ -51,10 +42,4 @@ options:
             - Controls the HTTP connections timeout period (in seconds) to the API.
         type: int
         default: 10
-
-    http_agent:
-        description:
-            - Configures the HTTP User-Agent header.
-        type: str
-        default: Ansible
     '''

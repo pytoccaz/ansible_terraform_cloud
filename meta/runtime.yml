@@ -1,3 +1,11 @@
 ---
 requires_ansible: '>=2.13.13'
 
+plugin_routing:
+    modules:
+        tfc_workspaces_info:
+            redirect: pytoccaz.terraform_cloud.hcp_workspace_info
+        tfc_workspace_info:
+            redirect: pytoccaz.terraform_cloud.hcp_workspace_info
+        tfc_workspace_vars_info:
+            redirect: pytoccaz.terraform_cloud.hcp_workspace_vars_info
