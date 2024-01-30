@@ -1,14 +1,14 @@
-.. _pytoccaz.terraform_cloud.tfc_workspaces_info_module:
+.. _pytoccaz.terraform_cloud.hcp_workspace_var_update_module:
 
 
-********************************************
-pytoccaz.terraform_cloud.tfc_workspaces_info
-********************************************
+*************************************************
+pytoccaz.terraform_cloud.hcp_workspace_var_update
+*************************************************
 
-**Terraform Cloud API module to lists workspaces in a organization.**
+**Terraform Cloud API (HCP) module to modify workspace vars.**
 
 
-Version added: 1.0.0
+Version added: 2.0.0
 
 .. contents::
    :local:
@@ -17,7 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module allows you to list to workspaces in a organization via the Terraform Cloud API workspaces endpoint.
+- This module modifies a variable attached to a workspace.
+- This module is an alternative to ``tfc_var_update``.
+- See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspace-variables#update-variables
 
 
 
@@ -71,19 +73,18 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>api_version</b>
+                    <b>attributes</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"v2"</div>
                 </td>
                 <td>
-                        <div>The version of Terraform Cloud API.</div>
-                        <div>The version <code>v2</code> is currently the only possible value, so you should not change it.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: version</div>
+                        <div>attributes content</div>
+                        <div>shortcut for <code>data</code> option</div>
+                        <div>Mutually exclusive with options <code>payload</code> and <code>data</code></div>
                 </td>
             </tr>
             <tr>
@@ -105,114 +106,35 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>direct_link</b>
+                    <b>data</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>A complet link with urlencoded parameters for pagination or search filters.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: link</div>
+                        <div>data content (usually an <code>attributes</code> property)</div>
+                        <div>shortcut for plain <code>payload</code> option</div>
+                        <div>Mutually exclusive with options <code>payload</code> and <code>attributes</code></div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>http_agent</b>
+                    <b>payload</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">"Ansible"</div>
-                </td>
-                <td>
-                        <div>Configures the HTTP User-Agent header.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>organization</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The organization name.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>page_number</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">1</div>
-                </td>
-                <td>
-                        <div>Pagination page number.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: page</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>page_size</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">20</div>
-                </td>
-                <td>
-                        <div>Pagination page size.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: size</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>search_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Restricts results to workspaces with a name that matches the search string using a fuzzy search.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>search_wildcard_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Restricts restricts results to workspaces with partial matching, using * on prefix, suffix, or both.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: search_wildcard</div>
+                        <div>Raw payload containing usually a <code>data</code> property</div>
+                        <div>Mutually exclusive with options <code>data</code> and <code>attributes</code></div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: raw</div>
                 </td>
             </tr>
             <tr>
@@ -234,6 +156,55 @@ Parameters
                         <div>Verify TLS certificates (do not disable this in production).</div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>variable_id</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ID of the variable to update.</div>
+                        <div>Mutually exclusive with <code>key</code> option.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>variable_key</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The key of the variable to update.</div>
+                        <div>Alternative to <code>variable_id</code> for better convenience.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: key</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>workspace_id</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ID of the workspace which the variable is associated.</div>
+                </td>
+            </tr>
     </table>
     <br/>
 
@@ -245,12 +216,24 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Get a the first workspace from Terraform Cloud for orga myorga
-      tfc_workspaces_info:
-        organization: myorga
-        page_size: 1
+    - name: Change the value of a variable by variable ID
+      hcp_workspace_var_update:
+        workspace_id: "ws-c6FoAsJsrD5abMrS"
+        variable_id: "var-sQaLVxPGd8Bhui56"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-      register: a_workspace
+        payload:
+          data:
+            attributes:
+              value: "value1"
+
+    - name: Change the value of a variable by variable key
+      hcp_workspace_var_update:
+        workspace_id: "ws-c6FoAsJsrD5abMrS"
+        variable_key: "var1"
+        token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
+        data:
+          attributes:
+            value: "value1"
 
 
 
@@ -272,44 +255,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>data</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=dictionary</span>
-                    </div>
-                </td>
-                <td>on success</td>
-                <td>
-                            <div>The workspaces list</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>links</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=dictionary</span>
-                    </div>
-                </td>
-                <td>on success</td>
-                <td>
-                            <div>The pagination links</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>meta</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
                       <span style="color: purple">dictionary</span>
                     </div>
                 </td>
-                <td>on success</td>
+                <td>success</td>
                 <td>
-                            <div>Pagination info</div>
+                            <div>The data attribute from HCP route <code>PATCH /workspaces/:workspace_id/vars/:variable_id</code></div>
                     <br/>
                 </td>
             </tr>

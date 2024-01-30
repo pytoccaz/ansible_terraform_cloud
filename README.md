@@ -1,6 +1,6 @@
 # Ansible Collection - pytoccaz.terraform_cloud
 
- Modules to interact with terraform cloud api
+ Modules to interact with Terraform Cloud API (HCP)
 
 
 <!--start requires_ansible-->
@@ -22,8 +22,12 @@ ansible-galaxy collection install pytoccaz.terraform_cloud
 ### Modules
 Name | Description
 --- | ---
-[pytoccaz.terraform_cloud.tfc_workspace_vars_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.tfc_workspace_vars_info_module.rst)|Terraform Cloud API module to list workspace vars.
-[pytoccaz.terraform_cloud.tfc_workspaces_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.tfc_workspaces_info_module.rst)|Terraform Cloud API module to lists workspaces in a organization.
+[pytoccaz.terraform_cloud.hcp_var_update](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.hcp_var_update_module.rst)|Terraform Cloud API (HCP) module to list workspace vars.
+[pytoccaz.terraform_cloud.hcp_workspace_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.hcp_workspace_info_module.rst)|Terraform Cloud API (HCP) module to display a workspace.
+[pytoccaz.terraform_cloud.hcp_workspace_update](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.hcp_workspace_update_module.rst)|Terraform Cloud API (HCP) module to update a workspace.
+[pytoccaz.terraform_cloud.hcp_workspace_var_update](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.hcp_workspace_var_update_module.rst)|Terraform Cloud API (HCP) module to modify workspace vars.
+[pytoccaz.terraform_cloud.hcp_workspace_vars_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.hcp_workspace_vars_info_module.rst)|Terraform Cloud API (HCP) module to list workspace vars.
+[pytoccaz.terraform_cloud.hcp_workspaces_info](https://github.com/pytoccaz/ansible_terraform_cloud/blob/main/docs/pytoccaz.terraform_cloud.hcp_workspaces_info_module.rst)|Terraform Cloud API (HCP) module to lists workspaces in one organization.
 
 <!--end collection content-->
 
