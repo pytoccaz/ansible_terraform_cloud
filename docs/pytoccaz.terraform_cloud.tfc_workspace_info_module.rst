@@ -1,14 +1,14 @@
-.. _pytoccaz.terraform_cloud.hcp_workspace_update_module:
+.. _pytoccaz.terraform_cloud.tfc_workspace_info_module:
 
 
-*********************************************
-pytoccaz.terraform_cloud.hcp_workspace_update
-*********************************************
+*******************************************
+pytoccaz.terraform_cloud.tfc_workspace_info
+*******************************************
 
-**Terraform Cloud API (HCP) module to update a workspace.**
+**Terraform Cloud API (HCP Terraform) module to display a workspace.**
 
 
-Version added: 2.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 2.0.0
 
 Synopsis
 --------
-- This module updates a workspace by Id or name and organization
-- See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#update-a-workspace
+- This module gives detail about one particuliar workspace given its ID or workspace name and organization.
+- See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#show-workspace.
 
 
 
@@ -61,29 +61,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"https://app.terraform.io"</div>
                 </td>
                 <td>
-                        <div>Terraform cloud service url.</div>
-                        <div>You should not change the value except for test purpose.</div>
+                        <div>Terraform cloud API (HCP Terraform) url.</div>
+                        <div>You should not change the value unless for test purpose.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: url</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>attributes</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>attributes content</div>
-                        <div>shortcut for <code>data</code> option</div>
-                        <div>Mutually exclusive with options <code>payload</code> and <code>data</code></div>
                 </td>
             </tr>
             <tr>
@@ -105,23 +87,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>data</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>data content (usually an <code>attributes</code> property)</div>
-                        <div>shortcut for plain <code>payload</code> option</div>
-                        <div>Mutually exclusive with options <code>payload</code> and <code>attributes</code></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>organization</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -134,23 +99,6 @@ Parameters
                         <div>The name of the organization the workspace belongs to.</div>
                         <div>Use with <code>workspace_name</code>.</div>
                         <div>Mutually exclusive with <code>workspace_id</code>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>payload</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Raw payload containing usually a <code>data</code> property</div>
-                        <div>Mutually exclusive with options <code>data</code> and <code>attributes</code></div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: raw</div>
                 </td>
             </tr>
             <tr>
@@ -218,29 +166,16 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Change workspace name by workspace Id with payload option
-      hcp_workspace_update:
+    - name: Get a workspace given the ID
+      tfc_workspaces_info:
         workspace_id: "ws-c6FoAsJsrD5abMrS"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-        payload:
-          data:
-            attributes:
-              name: "New_wk_name"
 
-    - name: Change workspace name by workspace Id with data option
-      hcp_workspace_update:
-        workspace_id: "ws-c6FoAsJsrD5abMrS"
+    - name: Get a workspace given name and organization
+      tfc_workspaces_info:
+        workspace_name: "test"
+        organization: "MyOrga"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-        data:
-          attributes:
-            name: "New_wk_name"
-
-    - name: Change workspace name by workspace Id with attributes option
-      hcp_workspace_update:
-        workspace_id: "ws-c6FoAsJsrD5abMrS"
-        token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-        attributes:
-          name: "New_wk_name"
 
 
 
@@ -267,7 +202,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>The data attribute from HCP route <code>PATCH /workspaces/:workspace_id</code> or <code>PATCH /organizations/:organization_name/workspaces/:name</code></div>
+                            <div>The data attribute from HCP Terraform route <code>GET /workspaces/:workspace_id</code> or <code>GET /organizations/:organization_name/workspaces/:name</code>.</div>
                     <br/>
                 </td>
             </tr>

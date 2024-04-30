@@ -12,16 +12,23 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: hcp_workspaces_info
+module: tfc_workspaces_info
 
-short_description: Terraform Cloud API (HCP) module to lists workspaces in one organization.
+short_description: Terraform Cloud API (HCP Terraform) module to list workspaces in one organization.
 
 version_added: 1.0.0
 
 description:
-    - This module lists the workspaces in one organization the appropriate Terraform Cloud API (HCP) endpoint.
+    - This module lists the workspaces in one organization.
     - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#list-workspaces.
 options:
+    direct_link:
+        description:
+            - A complet link with urlencoded parameters for pagination or search filters.
+        type: str
+        aliases:
+            - link
+
     organization:
         description:
             - The name of the organization the workspace belongs to.
@@ -74,7 +81,7 @@ EXAMPLES = '''
 RETURN = '''
     data:
         description:
-            - The data attribute from HCP route C(GET /organizations/:organization_name/workspaces/:name).
+            - The data attribute from HCP Terraform route C(GET /organizations/:organization_name/workspaces/:name).
         returned: success
         type: list
         elements: dict
@@ -125,8 +132,7 @@ def main():
     argument_spec = dict(
         direct_link=dict(type='str', aliases=['link']),
         organization=dict(type='str', required=True),
-        api_url=dict(type='str', aliases=[
-                     'url'], default="https://app.terraform.io"),
+        api_url=dict(type='str', aliases=['url']),
         api_token=dict(type='str', aliases=[
                        'token'], required=True, no_log=True),
         page_number=dict(type='int', aliases=['page'], default=1),

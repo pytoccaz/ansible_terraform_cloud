@@ -12,28 +12,37 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: hcp_var_update
+module: tfc_workspace_var_update
 
-short_description: Terraform Cloud API (HCP) module to list workspace vars.
+short_description: Terraform Cloud API (HCP Terraform) module to modify workspace vars.
 
 version_added: 2.0.0
 
 description:
-    - This module modifies a variable given the ID.
-    - This module is an alternative to C(hcp_workspace_var_update).
-    - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/variables#update-variables
-
-seealso:
-    - module: pytoccaz.terraform_cloud.hcp_workspace_var_update
+  - This module modifies a variable attached to a workspace.
+  - This module is an alternative to C(tfc_var_update).
+  - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspace-variables#update-variables
 
 options:
+    workspace_id:
+        description:
+            - The ID of the workspace which the variable is associated.
+        type: str
+        required: true
+
     variable_id:
         description:
             - The ID of the variable to update.
+            - Mutually exclusive with C(key) option.
         type: str
-        required: yes
+
+    variable_key:
+        description:
+            - The key of the variable to update.
+            - Alternative to C(variable_id) for better convenience.
+        type: str
         aliases:
-          - id
+            - key
 
 extends_documentation_fragment:
     - pytoccaz.terraform_cloud.tfc_options
@@ -44,47 +53,45 @@ author:
 '''
 
 EXAMPLES = '''
-- name: Change the value of a variable with payload option
-  hcp_var_update:
+- name: Change the value of a variable by variable ID
+  tfc_workspace_var_update:
+    workspace_id: "ws-c6FoAsJsrD5abMrS"
     variable_id: "var-sQaLVxPGd8Bhui56"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
     payload:
       data:
         attributes:
-          value: "var10"
+          value: "value1"
 
-- name: Change the value of a variable with data option
-  hcp_var_update:
-    variable_id: "var-sQaLVxPGd8Bhui56"
+- name: Change the value of a variable by variable key
+  tfc_workspace_var_update:
+    workspace_id: "ws-c6FoAsJsrD5abMrS"
+    variable_key: "var1"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
     data:
       attributes:
-        value: "var10"
-
-- name: Change the value of a variable with attributes option
-  hcp_var_update:
-    variable_id: "var-sQaLVxPGd8Bhui56"
-    token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
-    attributes:
-      value: "var10"
+        value: "value1"
 '''
 
 RETURN = '''
 data:
     description:
-        - The data attribute from HCP route C(PATCH /vars/:variable_id)
+        - The data attribute from HCP Terraform route C(PATCH /workspaces/:workspace_id/vars/:variable_id)
     returned: success
     type: dict
 '''
 from ..module_utils.tfc import TfcClient, TfcError
 from ansible.module_utils.basic import AnsibleModule
 
-WORKSPACE_VAR_PATH = "/vars/{variable_id}"
+WORKSPACE_VAR_PATH = "/workspaces/{workspace_id}/vars/{variable_id}"
+WORKSPACE_VARS_PATH = "/workspaces/{workspace_id}/vars"
 
 
 def update_var(module_params):
     api_url = module_params.get('api_url')
+    workspace_id = module_params.get('workspace_id')
     variable_id = module_params.get('variable_id')
+    variable_key = module_params.get('variable_key')
     validate_certs = module_params.get('validate_certs')
     token = module_params.get('api_token')
     connection_timeout = module_params.get('connection_timeout')
@@ -99,9 +106,22 @@ def update_var(module_params):
     else:
         payload = {"data": {"attributes": attributes}}
 
-    path = WORKSPACE_VAR_PATH.format(variable_id=variable_id)
-
     client = TfcClient(token, url=api_url)
+
+    if variable_key is not None:
+        path = WORKSPACE_VARS_PATH.format(workspace_id=workspace_id)
+        vars = client.read(path, verify=validate_certs,
+                           timeout=connection_timeout)
+
+        try:
+            variable_id = list(filter(
+                lambda var: var["attributes"]["key"] == variable_key, vars["data"]))[0]["id"]
+        except IndexError as e:
+            raise TfcError('Variable with key %s not found.' % (variable_key))
+
+    path = WORKSPACE_VAR_PATH.format(
+        workspace_id=workspace_id, variable_id=variable_id)
+
     r = client.patch(path, json=payload, verify=validate_certs,
                      timeout=connection_timeout)
 
@@ -110,14 +130,16 @@ def update_var(module_params):
 
 def main():
     """
-    Module hcp_var_update
+    Module tfc_workspace_var_update
     """
 
     argument_spec = dict(
         api_url=dict(type='str', aliases=['url']),
         api_token=dict(type='str', aliases=[
                        'token'], required=True, no_log=True),
-        variable_id=dict(type='str', aliases=['id'], required=True),
+        variable_id=dict(type='str'),
+        variable_key=dict(type='str', aliases=['key'], no_log=False),
+        workspace_id=dict(type='str', required=True),
         validate_certs=dict(type='bool', default=True),
         connection_timeout=dict(type='int', default=10),
         data=dict(type='dict'),
@@ -128,8 +150,10 @@ def main():
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
-        mutually_exclusive=(['payload', 'data', 'attributes'],),
-        required_one_of=(['payload', 'data', 'attributes'],),
+        mutually_exclusive=(['payload', 'data', 'attributes'], [
+                            'variable_key', 'variable_id']),
+        required_one_of=(['payload', 'data', 'attributes'],
+                         ['variable_key', 'variable_id']),
     )
 
     try:

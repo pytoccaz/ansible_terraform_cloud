@@ -12,14 +12,14 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: hcp_workspace_vars_info
+module: tfc_workspace_vars_info
 
-short_description: Terraform Cloud API (HCP) module to list workspace vars.
+short_description: Terraform Cloud API (HCP Terraform) module to list workspace vars.
 
 version_added: 1.0.0
 
 description:
-  - This module lists the variables attached to a workspace.
+  - Lists the variables attached to a workspace.
   - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspace-variables#list-variables
 
 options:
@@ -40,7 +40,7 @@ author:
 
 EXAMPLES = '''
 - name: List all the variables attached to a workspace
-  hcp_workspace_vars_info:
+  tfc_workspace_vars_info:
     workspace_id: "ws-c6FoAsJsrD5abMrS"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
 '''
@@ -48,7 +48,7 @@ EXAMPLES = '''
 RETURN = '''
 data:
     description:
-        - The data attribute from HCP route C(GET /workspaces/:workspace_id/vars)
+        - The data attribute from HCP Terraform route C(GET /workspaces/:workspace_id/vars)
     returned: success
     type: list
     elements: dict
@@ -76,12 +76,11 @@ def get_workspace_vars(module_params):
 
 def main():
     """
-    Module hcp_workspace_vars_info
+    Module tfc_workspace_vars_info
     """
 
     argument_spec = dict(
-        api_url=dict(type='str', aliases=[
-                     'url']),
+        api_url=dict(type='str', aliases=['url']),
         api_token=dict(type='str', aliases=[
                        'token'], required=True, no_log=True),
         workspace_id=dict(type='str', aliases=['id'], required=True),

@@ -1,11 +1,11 @@
-.. _pytoccaz.terraform_cloud.hcp_workspace_vars_info_module:
+.. _pytoccaz.terraform_cloud.tfc_workspace_vars_info_module:
 
 
 ************************************************
-pytoccaz.terraform_cloud.hcp_workspace_vars_info
+pytoccaz.terraform_cloud.tfc_workspace_vars_info
 ************************************************
 
-**Terraform Cloud API (HCP) module to list workspace vars.**
+**Terraform Cloud API (HCP Terraform) module to list workspace vars.**
 
 
 Version added: 1.0.0
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module lists the variables attached to a workspace.
+- Lists the variables attached to a workspace.
 - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspace-variables#list-variables
 
 
@@ -61,10 +61,9 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"https://app.terraform.io"</div>
                 </td>
                 <td>
-                        <div>Terraform cloud service url.</div>
+                        <div>Terraform cloud API (HCP Terraform) url.</div>
                         <div>You should not change the value unless for test purpose.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: url</div>
                 </td>
@@ -133,7 +132,7 @@ Examples
 .. code-block:: yaml
 
     - name: List all the variables attached to a workspace
-      hcp_workspace_vars_info:
+      tfc_workspace_vars_info:
         workspace_id: "ws-c6FoAsJsrD5abMrS"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
 
@@ -163,7 +162,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>The data attribute from HCP route <code>GET /workspaces/:workspace_id/vars</code></div>
+                            <div>The data attribute from HCP Terraform route <code>GET /workspaces/:workspace_id/vars</code></div>
                     <br/>
                 </td>
             </tr>

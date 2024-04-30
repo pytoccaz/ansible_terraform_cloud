@@ -12,9 +12,9 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: hcp_workspace_update
+module: tfc_workspace_update
 
-short_description: Terraform Cloud API (HCP) module to update a workspace.
+short_description: Terraform Cloud API (HCP Terraform) module to update a workspace.
 
 version_added: 2.0.0
 
@@ -23,23 +23,6 @@ description:
   - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#update-a-workspace
 
 options:
-    api_url:
-        description:
-            - Terraform cloud service url.
-            - You should not change the value except for test purpose.
-        type: str
-        default: https://app.terraform.io
-        aliases:
-            - url
-
-    api_token:
-        description:
-            - A token to authenticate Ansible.
-        type: str
-        required: yes
-        aliases:
-            - token
-
     workspace_id:
         description:
             - The ID of the workspace.
@@ -74,7 +57,7 @@ author:
 
 EXAMPLES = '''
 - name: Change workspace name by workspace Id with payload option
-  hcp_workspace_update:
+  tfc_workspace_update:
     workspace_id: "ws-c6FoAsJsrD5abMrS"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
     payload:
@@ -83,7 +66,7 @@ EXAMPLES = '''
           name: "New_wk_name"
 
 - name: Change workspace name by workspace Id with data option
-  hcp_workspace_update:
+  tfc_workspace_update:
     workspace_id: "ws-c6FoAsJsrD5abMrS"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
     data:
@@ -91,7 +74,7 @@ EXAMPLES = '''
         name: "New_wk_name"
 
 - name: Change workspace name by workspace Id with attributes option
-  hcp_workspace_update:
+  tfc_workspace_update:
     workspace_id: "ws-c6FoAsJsrD5abMrS"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
     attributes:
@@ -101,7 +84,7 @@ EXAMPLES = '''
 RETURN = '''
 data:
     description:
-        - The data attribute from HCP route C(PATCH /workspaces/:workspace_id) or C(PATCH /organizations/:organization_name/workspaces/:name)
+        - The data attribute from HCP Terraform route C(PATCH /workspaces/:workspace_id) or C(PATCH /organizations/:organization_name/workspaces/:name)
     returned: success
     type: dict
 '''
@@ -146,7 +129,7 @@ def patch_workspace(module_params):
 
 def main():
     """
-    Module hcp_workspace_update
+    Module tfc_workspace_update
     """
 
     argument_spec = dict(
