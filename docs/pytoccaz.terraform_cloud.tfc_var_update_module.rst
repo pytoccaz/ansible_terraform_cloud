@@ -1,11 +1,11 @@
-.. _pytoccaz.terraform_cloud.hcp_var_update_module:
+.. _pytoccaz.terraform_cloud.tfc_var_update_module:
 
 
 ***************************************
-pytoccaz.terraform_cloud.hcp_var_update
+pytoccaz.terraform_cloud.tfc_var_update
 ***************************************
 
-**Terraform Cloud API (HCP) module to list workspace vars.**
+**Terraform Cloud API (HCP Terraform) module to list workspace vars.**
 
 
 Version added: 2.0.0
@@ -17,8 +17,8 @@ Version added: 2.0.0
 
 Synopsis
 --------
-- This module modifies a variable given the ID.
-- This module is an alternative to ``hcp_workspace_var_update``.
+- This module modifies a variable given the variable ID.
+- This module is an alternative to ``tfc_workspace_var_update``.
 - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/variables#update-variables
 
 
@@ -62,10 +62,9 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"https://app.terraform.io"</div>
                 </td>
                 <td>
-                        <div>Terraform cloud service url.</div>
+                        <div>Terraform cloud API (HCP Terraform) url.</div>
                         <div>You should not change the value unless for test purpose.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: url</div>
                 </td>
@@ -134,7 +133,6 @@ Parameters
                 <td>
                         <div>Raw payload containing usually a <code>data</code> property</div>
                         <div>Mutually exclusive with options <code>data</code> and <code>attributes</code></div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: raw</div>
                 </td>
             </tr>
             <tr>
@@ -183,8 +181,8 @@ See Also
 
 .. seealso::
 
-   :ref:`pytoccaz.terraform_cloud.hcp_workspace_var_update_module`
-      The official documentation on the **pytoccaz.terraform_cloud.hcp_workspace_var_update** module.
+   :ref:`pytoccaz.terraform_cloud.tfc_workspace_var_update_module`
+      The official documentation on the **pytoccaz.terraform_cloud.tfc_workspace_var_update** module.
 
 
 Examples
@@ -193,7 +191,7 @@ Examples
 .. code-block:: yaml
 
     - name: Change the value of a variable with payload option
-      hcp_var_update:
+      tfc_var_update:
         variable_id: "var-sQaLVxPGd8Bhui56"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
         payload:
@@ -202,7 +200,7 @@ Examples
               value: "var10"
 
     - name: Change the value of a variable with data option
-      hcp_var_update:
+      tfc_var_update:
         variable_id: "var-sQaLVxPGd8Bhui56"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
         data:
@@ -210,7 +208,7 @@ Examples
             value: "var10"
 
     - name: Change the value of a variable with attributes option
-      hcp_var_update:
+      tfc_var_update:
         variable_id: "var-sQaLVxPGd8Bhui56"
         token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
         attributes:
@@ -241,7 +239,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>The data attribute from HCP route <code>PATCH /vars/:variable_id</code></div>
+                            <div>The data attribute from HCP Terraform route <code>PATCH /vars/:variable_id</code></div>
                     <br/>
                 </td>
             </tr>

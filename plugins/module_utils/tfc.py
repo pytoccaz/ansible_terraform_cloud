@@ -8,9 +8,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-from requests import get, post, patch
-from requests.auth import AuthBase
-from requests.exceptions import HTTPError, RequestException, JSONDecodeError
+try:
+    from requests import get, post, patch
+    from requests.auth import AuthBase
+    from requests.exceptions import HTTPError, RequestException, JSONDecodeError
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
 
 API_URL = "{url}/api/{version}"
 URL = "https://app.terraform.io"
@@ -21,24 +25,27 @@ class TfcError(Exception):
     pass
 
 
-class TfcTokenAuth(AuthBase):
-    """Attaches HTTP TFC Token Authentication to the given Request object."""
+if HAS_REQUESTS:
+    class TfcTokenAuth(AuthBase):
+        """Attaches HTTP TFC Token Authentication to the given Request object."""
 
-    def __init__(self, token):
-        # setup any auth-related data here
-        self.token = token
+        def __init__(self, token):
+            # setup any auth-related data here
+            self.token = token
 
-    def __call__(self, r):
-        # modify and return the request
-        if self.token is not None:
-            r.headers['Authorization'] = "Bearer {0}".format(self.token)
+        def __call__(self, r):
+            # modify and return the request
+            if self.token is not None:
+                r.headers['Authorization'] = "Bearer {0}".format(self.token)
 
-        return r
+            return r
 
 
 class TfcClient:
 
     def __init__(self, token: str, url: str = None) -> None:
+        if not HAS_REQUESTS:
+            raise TfcError('All Tfc modules require python requests library')
 
         if url is None:
             url = URL

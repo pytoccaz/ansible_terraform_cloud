@@ -16,10 +16,9 @@ class ModuleDocFragment(object):
 options:
     api_url:
         description:
-            - Terraform cloud service url.
+            - Terraform cloud API (HCP Terraform) url.
             - You should not change the value unless for test purpose.
         type: str
-        default: https://app.terraform.io
         aliases:
             - url
 

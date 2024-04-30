@@ -12,14 +12,14 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: hcp_workspace_info
+module: tfc_workspace_info
 
-short_description: Terraform Cloud API (HCP) module to display a workspace.
+short_description: Terraform Cloud API (HCP Terraform) module to display a workspace.
 
 version_added: 1.0.0
 
 description:
-  - This module displays one particuliar workspace details by workspace ID or workspace name and organization.
+  - This module gives detail about one particuliar workspace given its ID or workspace name and organization.
   - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#show-workspace.
 
 options:
@@ -56,12 +56,12 @@ author:
 
 EXAMPLES = '''
 - name: Get a workspace given the ID
-  hcp_workspaces_info:
+  tfc_workspaces_info:
     workspace_id: "ws-c6FoAsJsrD5abMrS"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
 
 - name: Get a workspace given name and organization
-  hcp_workspaces_info:
+  tfc_workspaces_info:
     workspace_name: "test"
     organization: "MyOrga"
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
@@ -70,7 +70,7 @@ EXAMPLES = '''
 RETURN = '''
 data:
     description:
-        - The data attribute from HCP route C(GET /workspaces/:workspace_id) or C(GET /organizations/:organization_name/workspaces/:name)
+        - The data attribute from HCP Terraform route C(GET /workspaces/:workspace_id) or C(GET /organizations/:organization_name/workspaces/:name).
     returned: success
     type: dict
 '''
@@ -104,15 +104,14 @@ def get_workspace(module_params):
 
 def main():
     """
-    Module hcp_workspace_info
+    Module tfc_workspace_info
     """
 
     argument_spec = dict(
         workspace_id=dict(type='str', aliases=['id']),
         workspace_name=dict(type='str', aliases=['name']),
         organization=dict(type='str'),
-        api_url=dict(type='str', aliases=[
-                     'url'], default="https://app.terraform.io"),
+        api_url=dict(type='str', aliases=['url']),
         api_token=dict(type='str', aliases=[
                        'token'], required=True, no_log=True),
         validate_certs=dict(type='bool', default=True),

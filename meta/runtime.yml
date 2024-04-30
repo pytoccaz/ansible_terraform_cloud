@@ -3,9 +3,15 @@ requires_ansible: '>=2.13.13'
 
 plugin_routing:
     modules:
-        tfc_workspaces_info:
-            redirect: pytoccaz.terraform_cloud.hcp_workspace_info
-        tfc_workspace_info:
-            redirect: pytoccaz.terraform_cloud.hcp_workspace_info
-        tfc_workspace_vars_info:
-            redirect: pytoccaz.terraform_cloud.hcp_workspace_vars_info
+        hcp_var_update:
+            redirect: pytoccaz.terraform_cloud.tfc_var_update
+        hcp_workspace_info:
+            redirect: pytoccaz.terraform_cloud.tfc_workspace_info
+        hcp_workspace_update:
+            redirect: pytoccaz.terraform_cloud.tfc_workspace_update
+        hcp_workspace_var_update:
+            redirect: pytoccaz.terraform_cloud.tfc_workspace_var_update
+        hcp_workspace_vars_info:
+            redirect: pytoccaz.terraform_cloud.tfc_workspace_vars_info
+        hcp_workspaces_info:
+            redirect: pytoccaz.terraform_cloud.tfc_workspaces_info

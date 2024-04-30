@@ -19,8 +19,6 @@ options:
             - Raw payload containing usually a C(data) property
             - Mutually exclusive with options C(data) and C(attributes)
         type: dict
-        aliases:
-          - raw
     data:
         description:
             - data content (usually an C(attributes) property)
