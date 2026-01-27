@@ -121,8 +121,7 @@ def main():
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
-        mutually_exclusive=(['workspace_name', "workspace_id"], [
-                            'organization', "workspace_id"],),
+        mutually_exclusive=(['workspace_name', "workspace_id"], ['organization', "workspace_id"],),
         required_together=(['organization', 'workspace_name'],),
         required_one_of=(['workspace_name', "workspace_id"],),
     )

@@ -1,3 +1,8 @@
+## v2.2.0 (2026-01-27)
+
+- Add `tfc_workspace_var_create` module
+- Add `tfc_workspace_create` module
+
 ## v2.1.0 (2024-04-30)
 
 - Change `hcp` prefix module name by `tfc` as it was at first. `hcp` prefix is a bad choice:

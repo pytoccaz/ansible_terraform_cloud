@@ -1,0 +1,122 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright (c) 2024 Olivier Bernard (@pytoccaz)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+from __future__ import absolute_import, division, print_function
+from ansible.module_utils.basic import AnsibleModule
+from ..module_utils.tfc import TfcClient, TfcError
+
+__metaclass__ = type
+
+
+DOCUMENTATION = '''
+---
+module: tfc_workspace_create
+
+short_description: Terraform Cloud API (HCP Terraform) module to create a workspace.
+
+version_added: 2.2.0
+
+description:
+  - This module create a workspace inside an organization
+  - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#create-a-workspace
+
+options:
+    organization:
+        description:
+            - The name of the organization the workspace belongs to.
+        type: str
+
+extends_documentation_fragment:
+    - pytoccaz.terraform_cloud.tfc_options
+    - pytoccaz.terraform_cloud.tfc_payload
+
+author:
+  - Olivier Bernard (@pytoccaz)
+'''
+
+EXAMPLES = '''
+- name: Create a workspace
+  tfc_workspace_create:
+    token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
+    payload:
+      data:
+        attributes:
+          type: "workspace"
+          name: "New_wk_name"
+'''
+
+RETURN = '''
+data:
+    description:
+        - The data attribute from HCP Terraform route C(POST /organizations/:orga/workspaces)
+    returned: success
+    type: dict
+'''
+
+WORKSPACE_PATH_BY_ORGANIZATION = "/organizations/{organization}/workspaces"
+
+
+def create_workspace(module_params):
+    organization = module_params.get('organization')
+    validate_certs = module_params.get('validate_certs')
+    token = module_params.get('api_token')
+    connection_timeout = module_params.get('connection_timeout')
+    api_url = module_params.get('api_url')
+    data = module_params.get('data')
+    attributes = module_params.get('attributes')
+    payload = module_params.get('payload')
+
+    path = WORKSPACE_PATH_BY_ORGANIZATION.format(organization=organization)
+
+    if payload is not None:
+        pass
+    elif data is not None:
+        payload = {"data": {"type": "workspaces", **data}}
+    else:
+        payload = {"data": {"type": "workspaces", "attributes": attributes}}
+
+    client = TfcClient(token, url=api_url)
+    r = client.create(path, json=payload, verify=validate_certs,
+                      timeout=connection_timeout)
+
+    return r
+
+
+def main():
+    """
+    Module tfc_workspace_create
+    """
+
+    argument_spec = dict(
+        api_url=dict(type='str', aliases=['url']),
+        api_token=dict(type='str', aliases=[
+                       'token'], required=True, no_log=True),
+        organization=dict(type='str', required=True),
+        validate_certs=dict(type='bool', default=True),
+        connection_timeout=dict(type='int', default=10),
+        data=dict(type='dict'),
+        payload=dict(type='dict'),
+        attributes=dict(type='dict'),
+    )
+
+    module = AnsibleModule(
+        argument_spec=argument_spec,
+        supports_check_mode=False,
+        mutually_exclusive=(['payload', 'data', 'attributes'],),
+        required_one_of=(['payload', 'data', 'attributes'],),
+    )
+
+    try:
+        result = create_workspace(module.params)
+    except TfcError as e:
+        module.fail_json(msg=str(e))
+
+    module.exit_json(**result)
+
+
+if __name__ == '__main__':
+    main()

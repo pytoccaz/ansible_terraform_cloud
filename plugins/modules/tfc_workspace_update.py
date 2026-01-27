@@ -92,7 +92,7 @@ from ..module_utils.tfc import TfcClient, TfcError
 from ansible.module_utils.basic import AnsibleModule
 
 WORKSPACE_PATH_BY_WORKSPACES = "/workspaces/{workspace_id}"
-WORKSPACE_PATH_BY_ORGANIZATIONS = "/organizations/{organization}/workspaces/{workspace_name}"
+WORKSPACE_PATH_BY_ORGANIZATION = "/organizations/{organization}/workspaces/{workspace_name}"
 
 
 def patch_workspace(module_params):
@@ -110,7 +110,7 @@ def patch_workspace(module_params):
     if workspace_id is not None:
         path = WORKSPACE_PATH_BY_WORKSPACES.format(workspace_id=workspace_id)
     else:
-        path = WORKSPACE_PATH_BY_ORGANIZATIONS.format(
+        path = WORKSPACE_PATH_BY_ORGANIZATION.format(
             workspace_name=workspace_name, organization=organization)
 
     if payload is not None:
@@ -118,7 +118,7 @@ def patch_workspace(module_params):
     elif data is not None:
         payload = {"data": data}
     else:
-        payload = {"data": {"attributes": attributes}}
+        payload = {"data": {"type": "workspaces", "attributes": attributes}}
 
     client = TfcClient(token, url=api_url)
     r = client.patch(path, json=payload, verify=validate_certs,
@@ -149,11 +149,9 @@ def main():
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=False,
-        mutually_exclusive=(['payload', 'data', 'attributes'], [
-                            'workspace_name', "workspace_id"], ['organization', "workspace_id"],),
+        mutually_exclusive=(['payload', 'data', 'attributes'], ['workspace_name', 'workspace_id'], ['organization', 'workspace_id'],),
         required_together=(['organization', 'workspace_name'],),
-        required_one_of=(['payload', 'data', 'attributes'], [
-                         'workspace_name', "workspace_id"],),
+        required_one_of=(['payload', 'data', 'attributes'], ['workspace_name', 'workspace_id'],),
     )
 
     try:
