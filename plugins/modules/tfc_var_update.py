@@ -95,9 +95,9 @@ def update_var(module_params):
     if payload is not None:
         pass
     elif data is not None:
-        payload = {"data": data}
+        payload = {"data": { **data }}
     else:
-        payload = {"data": {"attributes": attributes}}
+        payload = {"data": {"type": "vars" ,"attributes": attributes}}
 
     path = WORKSPACE_VAR_PATH.format(variable_id=variable_id)
 

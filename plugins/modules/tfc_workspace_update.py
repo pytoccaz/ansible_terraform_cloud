@@ -46,11 +46,12 @@ options:
         type: str
         aliases:
           - name
-
+          
 extends_documentation_fragment:
     - pytoccaz.terraform_cloud.tfc_options
     - pytoccaz.terraform_cloud.tfc_payload
-
+    - pytoccaz.terraform_cloud.tfc_tags
+    
 author:
   - Olivier Bernard (@pytoccaz)
 '''
@@ -88,8 +89,9 @@ data:
     returned: success
     type: dict
 '''
-from ..module_utils.tfc import TfcClient, TfcError
+from ..module_utils.tfc import TfcClient, TfcError, add_tags
 from ansible.module_utils.basic import AnsibleModule
+
 
 WORKSPACE_PATH_BY_WORKSPACES = "/workspaces/{workspace_id}"
 WORKSPACE_PATH_BY_ORGANIZATION = "/organizations/{organization}/workspaces/{workspace_name}"
@@ -106,6 +108,7 @@ def patch_workspace(module_params):
     data = module_params.get('data')
     attributes = module_params.get('attributes')
     payload = module_params.get('payload')
+    tags = module_params.get('tags')
 
     if workspace_id is not None:
         path = WORKSPACE_PATH_BY_WORKSPACES.format(workspace_id=workspace_id)
@@ -116,9 +119,14 @@ def patch_workspace(module_params):
     if payload is not None:
         pass
     elif data is not None:
-        payload = {"data": data}
+        payload = {"data": data }
     else:
-        payload = {"data": {"type": "workspaces", "attributes": attributes}}
+        payload = { "data": {"type": "workspaces"} }
+    
+    if attributes is not None:
+        payload["data"]["attributes"] = attributes
+    if tags is not None:
+        add_tags(payload, tags)
 
     client = TfcClient(token, url=api_url)
     r = client.patch(path, json=payload, verify=validate_certs,
@@ -144,14 +152,15 @@ def main():
         data=dict(type='dict'),
         payload=dict(type='dict'),
         attributes=dict(type='dict'),
+        tags=dict(type='dict'), 
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=False,
-        mutually_exclusive=(['payload', 'data', 'attributes'], ['workspace_name', 'workspace_id'], ['organization', 'workspace_id'],),
+        mutually_exclusive=(['payload', 'data', 'attributes'], ['payload', 'data', 'tags'], ['workspace_name', 'workspace_id'], ['organization', 'workspace_id'],),
         required_together=(['organization', 'workspace_name'],),
-        required_one_of=(['payload', 'data', 'attributes'], ['workspace_name', 'workspace_id'],),
+        required_one_of=(['payload', 'data', 'attributes', 'tags'], ['workspace_name', 'workspace_id'],),
     )
 
     try:

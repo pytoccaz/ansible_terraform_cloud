@@ -7,7 +7,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-
 try:
     from requests import get, post, patch
     from requests.auth import AuthBase
@@ -39,6 +38,14 @@ if HAS_REQUESTS:
                 r.headers['Authorization'] = "Bearer {0}".format(self.token)
 
             return r
+
+
+def add_tags(payload: dict, tags: dict) -> None:
+    payload["data"]["relationships"] = { 
+        "tag-bindings": {
+            "data": [{ "type": "tag-bindings", "attributes": { "key": k, "value": v} } for k,v in tags.items()] 
+        }
+    }
 
 
 class TfcClient:

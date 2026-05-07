@@ -1,7 +1,10 @@
-## v2.2.0 (2026-01-27)
+## v2.2.0 (2026-05-19)
 
 - Add `tfc_workspace_var_create` module
 - Add `tfc_workspace_create` module
+- Add `tfc_project_create` module
+- Add `tfc_project_update` module
+- Add `tags` option to workspace and project management modules
 
 ## v2.1.0 (2024-04-30)
 

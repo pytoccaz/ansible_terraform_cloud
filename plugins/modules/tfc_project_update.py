@@ -6,26 +6,28 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+from ansible.module_utils.basic import AnsibleModule
+from ..module_utils.tfc import TfcClient, TfcError, add_tags
 
 __metaclass__ = type
 
 
 DOCUMENTATION = '''
 ---
-module: tfc_workspace_create
+module: tfc_project_update
 
-short_description: Terraform Cloud API (HCP Terraform) module to create a workspace.
+short_description: Terraform Cloud API (HCP Terraform) module to update a project.
 
 version_added: 2.2.0
 
 description:
-  - This module create a workspace inside an organization
-  - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces#create-a-workspace
+  - This module update a project inside an organization
+  - See https://developer.hashicorp.com/terraform/cloud-docs/api-docs/projects#update-a-project
 
 options:
-    organization:
+    project_id:
         description:
-            - The name of the organization the workspace belongs to.
+            - The project Id.
         type: str
 
 extends_documentation_fragment:
@@ -38,32 +40,30 @@ author:
 '''
 
 EXAMPLES = '''
-- name: Create a workspace
-  tfc_workspace_create:
+- name: Update a project
+  tfc_project_update:
     token: "{{ lookup('ansible.builtin.env', 'TERRA_TOKEN') }}"
+    project_id: prj-ENPobeXyhdHXZh6kh
     payload:
       data:
         attributes:
-          type: "workspace"
-          name: "New_wk_name"
+          type: "project"
+          name: "New_project_name"
 '''
 
 RETURN = '''
 data:
     description:
-        - The data attribute from HCP Terraform route C(POST /organizations/:orga/workspaces)
+        - The data attribute from HCP Terraform route C(POST /projects/:project_id)
     returned: success
     type: dict
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-from ..module_utils.tfc import TfcClient, TfcError, add_tags
+PROJECT_PATH = "/projects/{project_id}"
 
 
-WORKSPACE_PATH_BY_ORGANIZATION = "/organizations/{organization}/workspaces"
-
-def create_workspace(module_params):
-    organization = module_params.get('organization')
+def update_project(module_params):
+    project_id = module_params.get('project_id')
     validate_certs = module_params.get('validate_certs')
     token = module_params.get('api_token')
     connection_timeout = module_params.get('connection_timeout')
@@ -73,22 +73,24 @@ def create_workspace(module_params):
     payload = module_params.get('payload')
     tags = module_params.get('tags')
 
-    path = WORKSPACE_PATH_BY_ORGANIZATION.format(organization=organization)
+    path = PROJECT_PATH.format(project_id=project_id)
 
     if payload is not None:
         pass
     elif data is not None:
-        payload = {"data": {"type": "workspaces", **data}}
+        payload = {"data": {"type": "projects", **data}}
     else:
-        payload = {"data": {"type": "workspaces" }}
-
+        payload = { "data": {"type": "projects"} }
+    
     if attributes is not None:
         payload["data"]["attributes"] = attributes
     if tags is not None:
         add_tags(payload, tags)
 
+
+
     client = TfcClient(token, url=api_url)
-    r = client.create(path, json=payload, verify=validate_certs,
+    r = client.patch(path, json=payload, verify=validate_certs,
                       timeout=connection_timeout)
 
     return r
@@ -96,14 +98,14 @@ def create_workspace(module_params):
 
 def main():
     """
-    Module tfc_workspace_create
+    Module tfc_project_update
     """
 
     argument_spec = dict(
         api_url=dict(type='str', aliases=['url']),
         api_token=dict(type='str', aliases=[
                        'token'], required=True, no_log=True),
-        organization=dict(type='str', required=True),
+        project_id=dict(type='str', required=True),
         validate_certs=dict(type='bool', default=True),
         connection_timeout=dict(type='int', default=10),
         data=dict(type='dict'),
@@ -116,11 +118,11 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=False,
         mutually_exclusive=(['payload', 'data', 'attributes'], ['payload', 'data', 'tags']),
-        required_one_of=(['payload', 'data', 'attributes'],),
+        required_one_of=(['payload', 'data', 'attributes', 'tags'],),
     )
 
     try:
-        result = create_workspace(module.params)
+        result = update_project(module.params)
     except TfcError as e:
         module.fail_json(msg=str(e))
 
